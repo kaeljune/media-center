@@ -1,0 +1,11 @@
+{
+  "name": "Example Playlist",
+  "description": "Playlist mẫu để test",
+  "songs": [
+    "song1",
+    "song2", 
+    "song3"
+  ],
+  "created_date": "2024-01-01",
+  "tags": ["chill", "background"]
+}

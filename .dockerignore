@@ -1,0 +1,53 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/*.log
+*.log
+
+# Cache
+audio/tts_cache/*
+audio/youtube_cache/*
+
+# Config (will be mounted as volume)
+config.json
+
+# Documentation
+README.md
+*.md
+
+# Scripts
+setup_macos.sh
+install_system_deps.sh
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Test files
+test_*
+tests/

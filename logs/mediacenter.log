@@ -1,0 +1,30 @@
+2025-08-14 04:56:09,466 - __main__ - INFO - Initializing Media Center...
+2025-08-14 04:56:09,471 - __main__ - INFO - Media Center initialized successfully
+2025-08-14 04:56:09,471 - __main__ - INFO - Starting Media Center services...
+2025-08-14 04:56:09,471 - __main__ - INFO - Webhook service starting on 0.0.0.0:8000
+2025-08-14 04:56:09,471 - __main__ - INFO - HC3 listener service started
+2025-08-14 04:56:09,487 - mediacenter.services.webhook_service - INFO - Starting webhook service on 0.0.0.0:8000
+2025-08-14 04:56:09,494 - mediacenter.services.hc3_listener - INFO - HC3 Command Listener started
+2025-08-14 04:56:45,226 - mediacenter.services.webhook_service - INFO - Received TTS request: Xin chào từ Docker trên macOS
+2025-08-14 04:56:45,227 - mediacenter.modules.tts_engine - INFO - Generating TTS for: Xin chào từ Docker trên macOS...
+2025-08-14 04:56:45,242 - mediacenter.modules.tts_engine - INFO - TTS generated successfully with espeak
+2025-08-14 05:01:12,896 - mediacenter.services.webhook_service - INFO - Received HC3 command: {'type': 'play_youtube_search', 'query': 'Đàm Vĩnh Hưng', 'audio_only': True}
+2025-08-14 05:01:16,520 - mediacenter.modules.youtube_player - INFO - Found: Yêu Rồi Để Đó - Đàm Vĩnh Hưng x Đông Thiên Đức | Người luồn kim, người se chỉ …
+2025-08-14 05:01:16,520 - mediacenter.modules.youtube_player - INFO - URL: https://i.ytimg.com/sb/OrA79YTk-wA/storyboard3_L3/M$M.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgiRrNHBBg==&sigh=rs$AOn4CLATwUtRpAF1nh-iVTUjbo4DJxAwUA
+2025-08-14 05:01:16,520 - mediacenter.modules.youtube_player - ERROR - Invalid YouTube URL: https://i.ytimg.com/sb/OrA79YTk-wA/storyboard3_L3/M$M.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgiRrNHBBg==&sigh=rs$AOn4CLATwUtRpAF1nh-iVTUjbo4DJxAwUA
+2025-08-14 05:01:16,520 - mediacenter.services.hc3_listener - INFO - Playing YouTube search: Đàm Vĩnh Hưng
+2025-08-14 05:01:43,687 - mediacenter.services.webhook_service - INFO - Received HC3 command: {'type': 'play_youtube_search', 'query': 'Đàm Vĩnh Hưng Biệt Khúc Cho Em', 'audio_only': True}
+2025-08-14 05:01:47,027 - mediacenter.modules.youtube_player - INFO - Found: Anh Van Biet   Dam Vinh Hung
+2025-08-14 05:01:47,027 - mediacenter.modules.youtube_player - INFO - URL: https://i.ytimg.com/sb/dHnEoRR99tI/storyboard3_L2/M$M.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjC4OPCBQ==&sigh=rs$AOn4CLD7y2GHIvZNO2vZcocTgI2eF94K2g
+2025-08-14 05:01:47,027 - mediacenter.modules.youtube_player - ERROR - Invalid YouTube URL: https://i.ytimg.com/sb/dHnEoRR99tI/storyboard3_L2/M$M.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjC4OPCBQ==&sigh=rs$AOn4CLD7y2GHIvZNO2vZcocTgI2eF94K2g
+2025-08-14 05:01:47,027 - mediacenter.services.hc3_listener - INFO - Playing YouTube search: Đàm Vĩnh Hưng Biệt Khúc Cho Em
+2025-08-14 05:02:04,829 - mediacenter.services.webhook_service - INFO - Received HC3 command: {'type': 'play_youtube_url', 'url': 'https://www.youtube.com/watch?v=OrA79YTk-wA', 'audio_only': True}
+2025-08-14 05:02:04,831 - mediacenter.modules.youtube_player - ERROR - Error playing YouTube URL https://www.youtube.com/watch?v=OrA79YTk-wA: 'StreamReader' object has no attribute 'fileno'
+2025-08-14 05:02:04,831 - mediacenter.services.hc3_listener - INFO - Playing YouTube URL: https://www.youtube.com/watch?v=OrA79YTk-wA
+2025-08-14 05:05:27,198 - __main__ - INFO - Initializing Media Center...
+2025-08-14 05:05:27,203 - __main__ - INFO - Media Center initialized successfully
+2025-08-14 05:05:27,203 - __main__ - INFO - Starting Media Center services...
+2025-08-14 05:05:27,203 - __main__ - INFO - Webhook service starting on 0.0.0.0:8000
+2025-08-14 05:05:27,203 - __main__ - INFO - HC3 listener service started
+2025-08-14 05:05:27,219 - mediacenter.services.webhook_service - INFO - Starting webhook service on 0.0.0.0:8000
+2025-08-14 05:05:27,225 - mediacenter.services.hc3_listener - INFO - HC3 Command Listener started

@@ -1,0 +1,38 @@
+services:
+  mediacenter:
+    build: .
+    container_name: mediacenter
+    ports:
+      - "8000:8000"  # Webhook service
+      - "8001:8001"  # HC3 listener
+    volumes:
+      # Persistent data
+      - ./audio:/app/audio
+      - ./logs:/app/logs
+      - ./config:/app/config
+      # Audio device access (Linux only)
+      - /dev/snd:/dev/snd
+    devices:
+      # Audio devices
+      - /dev/snd
+    environment:
+      - PYTHONPATH=/app
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    networks:
+      - mediacenter-net
+    # Audio capabilities for Linux
+    privileged: false
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp:unconfined
+
+networks:
+  mediacenter-net:
+    driver: bridge
+
+volumes:
+  audio_data:
+  logs_data:
+  config_data:
