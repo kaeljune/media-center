@@ -39,7 +39,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY mediacenter/ ./mediacenter/
+COPY stylish-tts/ ./stylish-tts/
+COPY setup_stylish_tts.sh .
 COPY main.py .
+
+# Setup Stylish-TTS
+RUN chmod +x setup_stylish_tts.sh && ./setup_stylish_tts.sh
 
 # Create necessary directories
 RUN mkdir -p \
