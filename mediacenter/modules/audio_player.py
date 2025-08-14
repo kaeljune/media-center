@@ -26,7 +26,7 @@ class AudioPlayer:
         self.youtube_player = YouTubePlayer(youtube_cache_dir)
         
     async def play_song(self, song_name: str):
-        """Phát một bài nhạc cụ thể"""
+        """Play a specific song"""
         try:
             song_path = self._find_song(song_name)
             if not song_path:
@@ -43,7 +43,7 @@ class AudioPlayer:
             return False
     
     async def play_playlist(self, playlist_name: str):
-        """Phát một playlist"""
+        """Play a playlist"""
         try:
             playlist = self._load_playlist(playlist_name)
             if not playlist:
@@ -65,7 +65,7 @@ class AudioPlayer:
             return False
     
     async def play_youtube_search(self, query: str, audio_only: bool = True):
-        """Tìm kiếm và phát nhạc từ YouTube"""
+        """Search and play music from YouTube"""
         try:
             await self.stop()
             success = await self.youtube_player.search_and_play(query, audio_only)
@@ -78,7 +78,7 @@ class AudioPlayer:
             return False
     
     async def play_youtube_url(self, url: str, audio_only: bool = True):
-        """Phát nhạc từ YouTube URL"""
+        """Play music from YouTube URL"""
         try:
             await self.stop()
             success = await self.youtube_player.play_youtube_url(url, audio_only)
@@ -91,7 +91,7 @@ class AudioPlayer:
             return False
     
     async def play_youtube_playlist(self, playlist_url: str, audio_only: bool = True, shuffle: bool = False):
-        """Phát YouTube playlist"""
+        """Play YouTube playlist"""
         try:
             await self.stop()
             success = await self.youtube_player.play_youtube_playlist(playlist_url, audio_only, shuffle)
@@ -104,8 +104,8 @@ class AudioPlayer:
             return False
 
     async def stop(self):
-        """Dừng phát nhạc"""
-        # Dừng local player
+        """Stop playing music"""
+        # Stop local player
         if self.current_process:
             try:
                 self.current_process.terminate()
@@ -118,12 +118,12 @@ class AudioPlayer:
             except Exception as e:
                 logger.error(f"Error stopping music: {e}")
         
-        # Dừng YouTube player
+        # Stop YouTube player
         await self.youtube_player.stop()
         self.is_playing = False
     
     async def pause(self):
-        """Tạm dừng phát nhạc"""
+        """Pause music playback"""
         if self.current_process and self.is_playing:
             try:
                 self.current_process.send_signal(subprocess.signal.SIGSTOP)
@@ -133,7 +133,7 @@ class AudioPlayer:
                 logger.error(f"Error pausing music: {e}")
     
     async def resume(self):
-        """Tiếp tục phát nhạc"""
+        """Resume music playback"""
         if self.current_process and not self.is_playing:
             try:
                 self.current_process.send_signal(subprocess.signal.SIGCONT)
@@ -143,34 +143,34 @@ class AudioPlayer:
                 logger.error(f"Error resuming music: {e}")
     
     async def next_song(self):
-        """Chuyển sang bài tiếp theo"""
+        """Skip to next song"""
         if self.current_playlist:
             self.current_index = (self.current_index + 1) % len(self.current_playlist)
             await self._play_current_song()
     
     async def previous_song(self):
-        """Chuyển về bài trước"""
+        """Go back to previous song"""
         if self.current_playlist:
             self.current_index = (self.current_index - 1) % len(self.current_playlist)
             await self._play_current_song()
     
     async def set_volume(self, volume: int):
-        """Điều chỉnh âm lượng (0-100)"""
+        """Adjust volume (0-100)"""
         self.volume = max(0, min(100, volume))
         logger.info(f"Volume set to: {self.volume}")
     
     def toggle_shuffle(self):
-        """Bật/tắt chế độ shuffle"""
+        """Toggle shuffle mode"""
         self.shuffle_mode = not self.shuffle_mode
         logger.info(f"Shuffle mode: {'ON' if self.shuffle_mode else 'OFF'}")
     
     def toggle_repeat(self):
-        """Bật/tắt chế độ repeat"""
+        """Toggle repeat mode"""
         self.repeat_mode = not self.repeat_mode
         logger.info(f"Repeat mode: {'ON' if self.repeat_mode else 'OFF'}")
     
     def get_status(self) -> Dict[str, Any]:
-        """Lấy trạng thái hiện tại của player"""
+        """Get current player status"""
         current_song = None
         if self.current_playlist and 0 <= self.current_index < len(self.current_playlist):
             current_song = self.current_playlist[self.current_index]
@@ -186,13 +186,13 @@ class AudioPlayer:
         }
     
     def _find_song(self, song_name: str) -> Optional[Path]:
-        """Tìm file nhạc theo tên"""
+        """Find music file by name"""
         for ext in ['.mp3', '.wav', '.flac', '.ogg', '.m4a']:
             song_path = self.music_dir / f"{song_name}{ext}"
             if song_path.exists():
                 return song_path
                 
-        # Tìm kiếm không phân biệt hoa thường
+        # Case-insensitive search
         for file_path in self.music_dir.rglob("*"):
             if file_path.is_file() and song_name.lower() in file_path.stem.lower():
                 return file_path
@@ -200,7 +200,7 @@ class AudioPlayer:
         return None
     
     def _load_playlist(self, playlist_name: str) -> List[str]:
-        """Load playlist từ file JSON"""
+        """Load playlist from JSON file"""
         playlist_path = self.playlists_dir / f"{playlist_name}.json"
         if not playlist_path.exists():
             return []
@@ -214,13 +214,13 @@ class AudioPlayer:
             return []
     
     async def _play_file(self, file_path: Path):
-        """Phát file nhạc sử dụng mpg123 hoặc aplay"""
+        """Play music file using mpg123 or aplay"""
         try:
-            # Thử sử dụng mpg123 cho MP3
+            # Try using mpg123 for MP3
             if file_path.suffix.lower() == '.mp3':
                 cmd = ['mpg123', '-q', str(file_path)]
             else:
-                # Sử dụng aplay cho các format khác
+                # Use aplay for other formats
                 cmd = ['aplay', str(file_path)]
                 
             self.current_process = await asyncio.create_subprocess_exec(
@@ -230,10 +230,10 @@ class AudioPlayer:
             )
             self.is_playing = True
             
-            # Chờ process kết thúc
+            # Wait for process to finish
             await self.current_process.wait()
             
-            # Nếu đang phát playlist và bài hát kết thúc tự nhiên
+            # If playing playlist and song ends naturally
             if self.is_playing and self.current_playlist:
                 await self._handle_song_finished()
                 
@@ -242,7 +242,7 @@ class AudioPlayer:
             self.is_playing = False
     
     async def _play_current_song(self):
-        """Phát bài nhạc hiện tại trong playlist"""
+        """Play current song in playlist"""
         if not self.current_playlist or self.current_index >= len(self.current_playlist):
             return
             
@@ -257,18 +257,18 @@ class AudioPlayer:
             await self.next_song()
     
     async def _handle_song_finished(self):
-        """Xử lý khi một bài nhạc kết thúc"""
+        """Handle when a song finishes"""
         if self.repeat_mode and len(self.current_playlist) == 1:
-            # Lặp lại bài hiện tại
+            # Repeat current song
             await self._play_current_song()
         elif self.current_index < len(self.current_playlist) - 1:
-            # Chuyển sang bài tiếp theo
+            # Move to next song
             await self.next_song()
         elif self.repeat_mode:
-            # Lặp lại playlist
+            # Repeat playlist
             self.current_index = 0
             await self._play_current_song()
         else:
-            # Kết thúc playlist
+            # End playlist
             self.is_playing = False
             logger.info("Playlist finished")

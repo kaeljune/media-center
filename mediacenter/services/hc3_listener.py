@@ -14,7 +14,7 @@ class HC3CommandListener:
         self.running = False
         
     async def start(self):
-        """Khởi động service lắng nghe lệnh từ HC3"""
+        """Start service to listen for commands from HC3"""
         self.running = True
         logger.info("HC3 Command Listener started")
         
@@ -27,16 +27,16 @@ class HC3CommandListener:
                 await asyncio.sleep(5)
     
     def stop(self):
-        """Dừng service"""
+        """Stop service"""
         self.running = False
         logger.info("HC3 Command Listener stopped")
     
     async def _listen_for_commands(self):
-        """Lắng nghe và xử lý lệnh từ HC3"""
+        """Listen and process commands from HC3"""
         pass
     
     async def handle_command(self, command: Dict[str, Any]):
-        """Xử lý lệnh từ HC3"""
+        """Process commands from HC3"""
         try:
             command_type = command.get('type')
             
@@ -61,26 +61,26 @@ class HC3CommandListener:
             logger.error(f"Error handling command: {e}")
     
     async def _handle_play_music(self, command: Dict[str, Any]):
-        """Phát một bài nhạc cụ thể"""
+        """Play a specific song"""
         song_name = command.get('song_name')
         if song_name:
             await self.audio_player.play_song(song_name)
             logger.info(f"Playing song: {song_name}")
     
     async def _handle_stop_music(self):
-        """Dừng phát nhạc"""
+        """Stop playing music"""
         await self.audio_player.stop()
         logger.info("Music stopped")
     
     async def _handle_play_playlist(self, command: Dict[str, Any]):
-        """Phát playlist"""
+        """Play playlist"""
         playlist_name = command.get('playlist_name')
         if playlist_name:
             await self.audio_player.play_playlist(playlist_name)
             logger.info(f"Playing playlist: {playlist_name}")
     
     async def _handle_play_youtube_search(self, command: Dict[str, Any]):
-        """Tìm kiếm và phát nhạc từ YouTube"""
+        """Search and play music from YouTube"""
         query = command.get('query')
         audio_only = command.get('audio_only', True)
         if query:
@@ -88,7 +88,7 @@ class HC3CommandListener:
             logger.info(f"Playing YouTube search: {query}")
     
     async def _handle_play_youtube_url(self, command: Dict[str, Any]):
-        """Phát nhạc từ YouTube URL"""
+        """Play music from YouTube URL"""
         url = command.get('url')
         audio_only = command.get('audio_only', True)
         if url:
@@ -96,7 +96,7 @@ class HC3CommandListener:
             logger.info(f"Playing YouTube URL: {url}")
     
     async def _handle_play_youtube_playlist(self, command: Dict[str, Any]):
-        """Phát YouTube playlist"""
+        """Play YouTube playlist"""
         playlist_url = command.get('playlist_url')
         audio_only = command.get('audio_only', True)
         shuffle = command.get('shuffle', False)
@@ -105,7 +105,7 @@ class HC3CommandListener:
             logger.info(f"Playing YouTube playlist: {playlist_url}")
 
     async def _handle_volume(self, command: Dict[str, Any]):
-        """Điều chỉnh âm lượng"""
+        """Adjust volume"""
         volume = command.get('volume', 50)
         await self.audio_player.set_volume(volume)
         logger.info(f"Volume set to: {volume}")

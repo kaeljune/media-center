@@ -9,7 +9,7 @@ class Settings:
         self.config = self._load_config()
         
     def _load_config(self) -> Dict[str, Any]:
-        """Load configuration từ file hoặc tạo config mặc định"""
+        """Load configuration from file or create default config"""
         config_path = Path(self.config_file)
         
         if config_path.exists():
@@ -25,7 +25,7 @@ class Settings:
             return config
     
     def _get_default_config(self) -> Dict[str, Any]:
-        """Cấu hình mặc định"""
+        """Default configuration"""
         return {
             "audio": {
                 "music_dir": "./audio/music",
@@ -69,7 +69,7 @@ class Settings:
         }
     
     def save_config(self):
-        """Lưu cấu hình ra file"""
+        """Save configuration to file"""
         try:
             config_path = Path(self.config_file)
             config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -80,7 +80,7 @@ class Settings:
             print(f"Error saving config: {e}")
     
     def get(self, key: str, default: Any = None) -> Any:
-        """Lấy giá trị config theo key (hỗ trợ nested key với dấu chấm)"""
+        """Get config value by key (supports nested keys with dots)"""
         keys = key.split('.')
         value = self.config
         
@@ -93,7 +93,7 @@ class Settings:
         return value
     
     def set(self, key: str, value: Any):
-        """Set giá trị config theo key (hỗ trợ nested key với dấu chấm)"""
+        """Set config value by key (supports nested keys with dots)"""
         keys = key.split('.')
         config = self.config
         
@@ -105,7 +105,7 @@ class Settings:
         config[keys[-1]] = value
         self.save_config()
     
-    # Các property để truy cập nhanh các cấu hình thường dùng
+    # Properties for quick access to commonly used configurations
     @property
     def music_dir(self) -> str:
         return self.get('audio.music_dir', './audio/music')
@@ -151,7 +151,7 @@ class Settings:
         return self.get('audio.default_volume', 50)
     
     def create_directories(self):
-        """Tạo các thư mục cần thiết"""
+        """Create necessary directories"""
         directories = [
             self.music_dir,
             self.playlists_dir,

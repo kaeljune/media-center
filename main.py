@@ -28,12 +28,12 @@ class MediaCenterApp:
         signal.signal(signal.SIGTERM, self._signal_handler)
         
     def _setup_logging(self):
-        """Thiết lập logging"""
-        # Tạo thư mục logs nếu chưa có
+        """Setup logging"""
+        # Create logs directory if it doesn't exist
         log_dir = Path(self.settings.log_file).parent
         log_dir.mkdir(parents=True, exist_ok=True)
         
-        # Cấu hình logging
+        # Configure logging
         logging.basicConfig(
             level=getattr(logging, self.settings.log_level),
             format=self.settings.get('logging.format'),
@@ -46,38 +46,38 @@ class MediaCenterApp:
         self.logger = logging.getLogger(__name__)
         
     def _signal_handler(self, signum, frame):
-        """Xử lý tín hiệu dừng"""
+        """Handle stop signal"""
         self.logger.info(f"Received signal {signum}, shutting down...")
         self.running = False
         
     async def initialize(self):
-        """Khởi tạo các components"""
+        """Initialize components"""
         try:
             self.logger.info("Initializing Media Center...")
             
-            # Tạo các thư mục cần thiết
+            # Create necessary directories
             self.settings.create_directories()
             
-            # Khởi tạo audio player
+            # Initialize audio player
             self.audio_player = AudioPlayer(
                 music_dir=self.settings.music_dir,
                 playlists_dir=self.settings.playlists_dir
             )
             self.audio_player.set_volume(self.settings.default_volume)
             
-            # Khởi tạo TTS engine
+            # Initialize TTS engine
             self.tts_engine = TTSEngine(
                 cache_dir=self.settings.tts_cache_dir,
                 default_voice=self.settings.get('tts.default_voice', 'default')
             )
             
-            # Khởi tạo HC3 listener
+            # Initialize HC3 listener
             self.hc3_listener = HC3CommandListener(
                 audio_player=self.audio_player,
                 settings=self.settings
             )
             
-            # Khởi tạo webhook service
+            # Initialize webhook service
             self.webhook_service = WebhookService(
                 tts_engine=self.tts_engine,
                 settings=self.settings,
@@ -91,15 +91,15 @@ class MediaCenterApp:
             raise
             
     async def start(self):
-        """Khởi động tất cả services"""
+        """Start all services"""
         try:
             self.running = True
             self.logger.info("Starting Media Center services...")
             
-            # Tạo các task cho các services
+            # Create tasks for all services
             tasks = []
             
-            # Khởi động webhook service
+            # Start webhook service
             if self.settings.get('webhook.enabled', True):
                 webhook_task = asyncio.create_task(
                     self.webhook_service.start(
@@ -110,13 +110,13 @@ class MediaCenterApp:
                 tasks.append(webhook_task)
                 self.logger.info(f"Webhook service starting on {self.settings.webhook_host}:{self.settings.webhook_port}")
             
-            # Khởi động HC3 listener
+            # Start HC3 listener
             if self.settings.get('hc3.enabled', True):
                 hc3_task = asyncio.create_task(self.hc3_listener.start())
                 tasks.append(hc3_task)
                 self.logger.info("HC3 listener service started")
             
-            # Chờ tất cả tasks hoàn thành hoặc có lỗi
+            # Wait for all tasks to complete or error
             if tasks:
                 await asyncio.gather(*tasks, return_exceptions=True)
             else:
@@ -129,7 +129,7 @@ class MediaCenterApp:
             await self.stop()
             
     async def stop(self):
-        """Dừng tất cả services"""
+        """Stop all services"""
         try:
             self.logger.info("Stopping Media Center services...")
             

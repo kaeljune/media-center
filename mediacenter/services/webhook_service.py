@@ -23,18 +23,18 @@ class WebhookService:
         self.setup_routes()
         
     def setup_routes(self):
-        """Thiết lập các API endpoints"""
+        """Setup API endpoints"""
         
         @self.app.post("/tts")
         async def text_to_speech(request: TTSRequest):
-            """API endpoint để nhận text và chuyển thành speech"""
+            """API endpoint to receive text and convert to speech"""
             try:
                 if not request.text or request.text.strip() == "":
                     raise HTTPException(status_code=400, detail="Text cannot be empty")
                 
                 logger.info(f"Received TTS request: {request.text}")
                 
-                # Chuyển text thành speech và phát
+                # Convert text to speech and play
                 await self.tts_engine.speak(
                     text=request.text,
                     voice=request.voice,
@@ -55,7 +55,7 @@ class WebhookService:
         
         @self.app.post("/hc3/command")
         async def hc3_command(command: dict):
-            """API endpoint để nhận lệnh từ HC3"""
+            """API endpoint to receive commands from HC3"""
             try:
                 logger.info(f"Received HC3 command: {command}")
                 
@@ -71,7 +71,7 @@ class WebhookService:
 
         @self.app.get("/status")
         async def service_status():
-            """Trạng thái của service"""
+            """Service status"""
             return {
                 "service": "webhook_service",
                 "tts_engine": "available" if self.tts_engine else "unavailable",
@@ -80,7 +80,7 @@ class WebhookService:
             }
     
     async def start(self, host: str = "0.0.0.0", port: int = 8000):
-        """Khởi động webhook service"""
+        """Start webhook service"""
         try:
             import uvicorn
             logger.info(f"Starting webhook service on {host}:{port}")
@@ -99,5 +99,5 @@ class WebhookService:
             raise
     
     def stop(self):
-        """Dừng webhook service"""
+        """Stop webhook service"""
         logger.info("Webhook service stopped")

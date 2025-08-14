@@ -1,48 +1,48 @@
 # Media Center for Jetson Nano
 
-Hệ thống Media Center được thiết kế để chạy trên Jetson Nano với các tính năng:
+A Media Center system designed to run on Jetson Nano with the following features:
 
-- **HC3 Command Listener**: Nhận lệnh từ HC3 để phát nhạc/playlist
-- **Webhook TTS Service**: API webhook để chuyển text thành speech
-- **Audio Player**: Quản lý phát nhạc với hỗ trợ playlist
-- **Text-to-Speech**: Chuyển đổi text thành giọng nói
+- **HC3 Command Listener**: Receives commands from HC3 to play music/playlists
+- **Webhook TTS Service**: Webhook API for text-to-speech conversion
+- **Audio Player**: Music playback management with playlist support
+- **Text-to-Speech**: Text to voice conversion
 
-## Cấu trúc dự án
+## Project Structure
 
 ```
 mediacenter-jetson/
 ├── mediacenter/
 │   ├── config/
 │   │   ├── __init__.py
-│   │   └── settings.py          # Cấu hình hệ thống
+│   │   └── settings.py          # System configuration
 │   ├── modules/
 │   │   ├── __init__.py
-│   │   ├── audio_player.py      # Module phát nhạc
-│   │   └── tts_engine.py        # Module text-to-speech
+│   │   ├── audio_player.py      # Audio player module
+│   │   └── tts_engine.py        # Text-to-speech module
 │   ├── services/
 │   │   ├── __init__.py
-│   │   ├── hc3_listener.py      # Service lắng nghe HC3
+│   │   ├── hc3_listener.py      # HC3 listener service
 │   │   └── webhook_service.py   # Webhook API service
 │   └── __init__.py
 ├── audio/
-│   ├── music/                   # Thư mục chứa nhạc
-│   ├── playlists/               # Thư mục chứa playlist JSON
-│   └── tts_cache/               # Cache file TTS
-├── logs/                        # Thư mục log
-├── main.py                      # Application chính
+│   ├── music/                   # Music directory
+│   ├── playlists/               # Playlist JSON directory
+│   └── tts_cache/               # TTS cache files
+├── logs/                        # Log directory
+├── main.py                      # Main application
 ├── requirements.txt             # Dependencies
-└── README.md                    # Tài liệu này
+└── README.md                    # This document
 ```
 
-## Cài đặt
+## Installation
 
-### 1. Cài đặt Python dependencies
+### 1. Install Python dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Cài đặt system dependencies (cho Jetson Nano)
+### 2. Install system dependencies (for Jetson Nano)
 
 ```bash
 # Audio players
@@ -55,19 +55,19 @@ sudo apt-get install espeak espeak-data festival
 sudo apt-get install sox
 ```
 
-### 3. Cấu hình audio output
+### 3. Configure audio output
 
 ```bash
-# Kiểm tra audio devices
+# Check audio devices
 aplay -l
 
-# Set default audio output (nếu cần)
-# Chỉnh sửa /home/user/.asoundrc hoặc /etc/asound.conf
+# Set default audio output (if needed)
+# Edit /home/user/.asoundrc or /etc/asound.conf
 ```
 
-## Sử dụng
+## Usage
 
-### Khởi động Media Center
+### Start Media Center
 
 ```bash
 python main.py
@@ -81,7 +81,7 @@ python main.py
 
 ```json
 {
-  "text": "Xin chào, đây là thông báo từ hệ thống",
+  "text": "Hello, this is a notification from the system",
   "voice": "default",
   "speed": 1.0,
   "volume": 0.8
@@ -98,12 +98,12 @@ python main.py
 
 ### HC3 Commands
 
-Service sẽ lắng nghe các lệnh từ HC3 với format:
+The service will listen for commands from HC3 with the following format:
 
 ```json
 {
   "type": "play_music",
-  "song_name": "bai_hat.mp3"
+  "song_name": "song.mp3"
 }
 ```
 
@@ -127,9 +127,9 @@ Service sẽ lắng nghe các lệnh từ HC3 với format:
 }
 ```
 
-## Cấu hình
+## Configuration
 
-File cấu hình sẽ được tạo tự động tại `config.json`. Các thông số chính:
+Configuration file will be automatically created at `config.json`. Main parameters:
 
 ```json
 {
@@ -154,82 +154,82 @@ File cấu hình sẽ được tạo tự động tại `config.json`. Các thô
 }
 ```
 
-## Quản lý Playlist
+## Playlist Management
 
-Tạo file JSON trong thư mục `audio/playlists/`:
+Create JSON files in the `audio/playlists/` directory:
 
 **playlist1.json**:
 ```json
 {
   "name": "Playlist 1",
   "songs": [
-    "bai_hat_1",
-    "bai_hat_2", 
-    "bai_hat_3"
+    "song_1",
+    "song_2", 
+    "song_3"
   ]
 }
 ```
 
 ## Logging
 
-Logs được ghi vào:
+Logs are written to:
 - File: `logs/mediacenter.log`
 - Console output
 
-## Docker Deployment (Khuyến nghị)
+## Docker Deployment (Recommended)
 
-### Chạy trên Jetson Nano
+### Run on Jetson Nano
 
 ```bash
-# Build cho ARM64
+# Build for ARM64
 ./build.sh -p linux/arm64
 
 # Deploy
 ./deploy.sh --build up
 ```
 
-### Chạy trên macOS/x86_64
+### Run on macOS/x86_64
 
 ```bash
-# Build cho AMD64
+# Build for AMD64
 ./build.sh -p linux/amd64
 
 # Deploy
 ./deploy.sh --build up
 ```
 
-### Các lệnh Docker hữu ích
+### Useful Docker commands
 
 ```bash
-# Xem logs
+# View logs
 ./deploy.sh logs
 
-# Kiểm tra trạng thái
+# Check status
 ./deploy.sh status
 
-# Dừng services
+# Stop services
 ./deploy.sh down
 
 # Restart
 ./deploy.sh restart
 ```
 
-### Docker Compose đơn giản
+### Simple Docker Compose
 
 ```bash
-# Khởi động
+# Start
 docker-compose up -d
 
-# Xem logs
+# View logs
 docker-compose logs -f
 
-# Dừng
+# Stop
 docker-compose down
 ```
 
-## Chạy như Service (Systemd) - Không dùng Docker
+## Run as Service (Systemd) - Without Docker
 
-Tạo file `/etc/systemd/system/mediacenter.service`:
+Create file `/etc/systemd/system/mediacenter.service`:
 
 ```ini
 [Unit]
@@ -248,7 +248,7 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-Kích hoạt service:
+Enable service:
 
 ```bash
 sudo systemctl enable mediacenter
@@ -258,26 +258,26 @@ sudo systemctl status mediacenter
 
 ## Troubleshooting
 
-### Lỗi audio không phát được
+### Audio playback issues
 
-1. Kiểm tra audio device: `aplay -l`
+1. Check audio device: `aplay -l`
 2. Test audio: `speaker-test -t wav -c 2`
-3. Kiểm tra volume: `alsamixer`
+3. Check volume: `alsamixer`
 
-### Lỗi TTS không hoạt động
+### TTS not working
 
-1. Kiểm tra espeak: `espeak "test"`
-2. Cài đặt festival: `sudo apt-get install festival`
+1. Test espeak: `espeak "test"`
+2. Install festival: `sudo apt-get install festival`
 
-### Lỗi import module
+### Module import errors
 
-Chạy từ thư mục gốc của project và đảm bảo Python path đúng.
+Run from the project root directory and ensure Python path is correct.
 
-## Phát triển thêm
+## Development
 
-Dự án được thiết kế modular để dễ dàng mở rộng:
+The project is designed to be modular for easy extension:
 
-- Thêm audio effects trong `modules/`
-- Thêm protocol communication khác trong `services/`
-- Thêm cấu hình mới trong `config/settings.py`
-- Thêm API endpoints mới trong `webhook_service.py`
+- Add audio effects in `modules/`
+- Add other communication protocols in `services/`
+- Add new configurations in `config/settings.py`
+- Add new API endpoints in `webhook_service.py`

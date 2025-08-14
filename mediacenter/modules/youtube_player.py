@@ -18,7 +18,7 @@ class YouTubePlayer:
         self.volume = 50
         
     async def play_youtube_url(self, url: str, audio_only: bool = True):
-        """Phát nhạc từ YouTube URL"""
+        """Play music from YouTube URL"""
         try:
             if not self._is_valid_youtube_url(url):
                 logger.error(f"Invalid YouTube URL: {url}")
@@ -27,7 +27,7 @@ class YouTubePlayer:
             await self.stop()
             
             if audio_only:
-                # Chỉ phát audio, tiết kiệm băng thông
+                # Audio only, save bandwidth
                 cmd = [
                     'yt-dlp',
                     '--extract-audio',
@@ -57,10 +57,10 @@ class YouTubePlayer:
                 await yt_process.wait()
                 
             else:
-                # Phát video (cần display)
+                # Play video (requires display)
                 cmd = [
                     'yt-dlp',
-                    '--format', 'best[height<=480]',  # Giới hạn quality cho Jetson
+                    '--format', 'best[height<=480]',  # Limit quality for Jetson
                     '--output', '-',
                     url
                 ]
@@ -92,9 +92,9 @@ class YouTubePlayer:
             return False
     
     async def search_and_play(self, query: str, audio_only: bool = True):
-        """Tìm kiếm và phát nhạc từ YouTube"""
+        """Search and play music from YouTube"""
         try:
-            # Kiểm tra nếu đang chạy trên macOS (có biến môi trường AUDIO_OUTPUT=host)
+            # Check if running on macOS (has environment variable AUDIO_OUTPUT=host)
             if os.environ.get('AUDIO_OUTPUT') == 'host':
                 return await self._play_on_macos_host(query, 'youtube_search')
             
@@ -106,9 +106,9 @@ class YouTubePlayer:
             return False
     
     async def _search_and_play_in_container(self, query: str, audio_only: bool = True):
-        """Phương thức cũ để phát trong container"""
+        """Legacy method to play in container"""
         try:
-            # Tìm kiếm video đầu tiên
+            # Search for first video
             search_cmd = [
                 'yt-dlp',
                 '--get-url',
@@ -146,12 +146,12 @@ class YouTubePlayer:
             return False
     
     async def _play_on_macos_host(self, param: str, command_type: str):
-        """Gọi script trên macOS host để phát audio"""
+        """Call script on macOS host to play audio"""
         try:
-            # Script path trong container (mounted từ host)
+            # Script path in container (mounted from host)
             script_path = "/app/play_audio_macos.sh"
             
-            # Chạy script trên host thông qua docker exec ngược
+            # Run script on host through reverse docker exec
             cmd = ['sh', '-c', f'echo "{param}" > /tmp/mediacenter_request && echo "{command_type}" > /tmp/mediacenter_command']
             
             process = await asyncio.create_subprocess_exec(
@@ -162,7 +162,7 @@ class YouTubePlayer:
             
             await process.wait()
             
-            # Tạo signal file để host script đọc
+            # Create signal file for host script to read
             with open('/tmp/mediacenter_request', 'w') as f:
                 f.write(param)
             with open('/tmp/mediacenter_command', 'w') as f:
@@ -176,18 +176,18 @@ class YouTubePlayer:
             return False
     
     async def play_youtube_playlist(self, playlist_url: str, audio_only: bool = True, shuffle: bool = False):
-        """Phát YouTube playlist"""
+        """Play YouTube playlist"""
         try:
             if not self._is_valid_youtube_playlist_url(playlist_url):
                 logger.error(f"Invalid YouTube playlist URL: {playlist_url}")
                 return False
                 
-            # Lấy danh sách video trong playlist
+            # Get list of videos in playlist
             list_cmd = [
                 'yt-dlp',
                 '--get-url',
                 '--get-title',
-                '--playlist-items', '1-20',  # Giới hạn 20 video đầu
+                '--playlist-items', '1-20',  # Limit to first 20 videos
                 playlist_url
             ]
             
@@ -205,7 +205,7 @@ class YouTubePlayer:
             if process.returncode == 0:
                 lines = stdout.decode().strip().split('\n')
                 
-                # Parse title và URL pairs
+                # Parse title and URL pairs
                 videos = []
                 for i in range(0, len(lines), 2):
                     if i + 1 < len(lines):
@@ -215,9 +215,9 @@ class YouTubePlayer:
                 
                 logger.info(f"Found {len(videos)} videos in playlist")
                 
-                # Phát từng video
+                # Play each video
                 for video in videos:
-                    if not self.is_playing:  # Có thể bị dừng
+                    if not self.is_playing:  # Might be stopped
                         break
                         
                     logger.info(f"Playing: {video['title']}")
@@ -233,10 +233,10 @@ class YouTubePlayer:
             return False
     
     async def download_and_cache(self, url: str, filename: Optional[str] = None) -> Optional[Path]:
-        """Download và cache YouTube audio để phát offline"""
+        """Download and cache YouTube audio for offline playback"""
         try:
             if not filename:
-                # Tạo filename từ video title
+                # Create filename from video title
                 info_cmd = ['yt-dlp', '--get-title', url]
                 process = await asyncio.create_subprocess_exec(
                     *info_cmd,
@@ -252,7 +252,7 @@ class YouTubePlayer:
                 
             cache_file = self.cache_dir / f"{filename}.mp3"
             
-            # Kiểm tra cache
+            # Check cache
             if cache_file.exists():
                 logger.info(f"Using cached file: {cache_file}")
                 return cache_file
@@ -262,7 +262,7 @@ class YouTubePlayer:
                 'yt-dlp',
                 '--extract-audio',
                 '--audio-format', 'mp3',
-                '--output', str(cache_file.with_suffix('')),  # yt-dlp sẽ thêm .mp3
+                '--output', str(cache_file.with_suffix('')),  # yt-dlp will add .mp3
                 url
             ]
             
@@ -286,7 +286,7 @@ class YouTubePlayer:
             return None
     
     async def stop(self):
-        """Dừng phát YouTube"""
+        """Stop YouTube playback"""
         if self.current_process:
             try:
                 self.current_process.terminate()
@@ -300,7 +300,7 @@ class YouTubePlayer:
                 logger.error(f"Error stopping YouTube playback: {e}")
     
     def _is_valid_youtube_url(self, url: str) -> bool:
-        """Kiểm tra URL YouTube hợp lệ"""
+        """Check if YouTube URL is valid"""
         youtube_patterns = [
             r'youtube\.com/watch\?v=',
             r'youtu\.be/',
@@ -310,7 +310,7 @@ class YouTubePlayer:
         return any(re.search(pattern, url) for pattern in youtube_patterns)
     
     def _is_valid_youtube_playlist_url(self, url: str) -> bool:
-        """Kiểm tra URL playlist YouTube hợp lệ"""
+        """Check if YouTube playlist URL is valid"""
         playlist_patterns = [
             r'youtube\.com/playlist\?list=',
             r'youtube\.com/watch\?.*list=',
@@ -319,7 +319,7 @@ class YouTubePlayer:
         return any(re.search(pattern, url) for pattern in playlist_patterns)
     
     def clear_cache(self):
-        """Xóa cache YouTube"""
+        """Clear YouTube cache"""
         try:
             for cache_file in self.cache_dir.glob("*.mp3"):
                 cache_file.unlink()
@@ -328,7 +328,7 @@ class YouTubePlayer:
             logger.error(f"Error clearing YouTube cache: {e}")
     
     def get_cache_info(self) -> Dict[str, Any]:
-        """Lấy thông tin cache"""
+        """Get cache information"""
         cache_files = list(self.cache_dir.glob("*.mp3"))
         total_size = sum(f.stat().st_size for f in cache_files)
         
